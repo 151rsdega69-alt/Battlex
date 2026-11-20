@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BattleX Admin</title>
+<style>
+:root{--bg:#0a0a0a;--card:#141414;--card2:#1c1c1c;--line:#3a2f08;--gold:#ffc400;--txt:#fff;--mut:#9a9a9a;--green:#22c55e;--red:#ef4444}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.btn{background:linear-gradient(135deg,#ffd633,#e0a400);color:#000;font-weight:800;border-radius:9px;padding:9px 16px;font-size:13px}
+.btn.s{padding:6px 11px;font-size:12px}.btn.g{background:#222;color:#fff;font-weight:600}.btn.r{background:#3a0d0d;color:#ff7b7b}.btn.ok{background:#0d2e18;color:var(--green)}
+input,select{width:100%;background:#0d0d0d;border:1px solid #333;border-radius:9px;padding:10px 12px;color:#fff;font:inherit;font-size:14px}
+input:focus,select:focus{outline:0;border-color:var(--gold)}
+label{display:block;font-size:12px;color:var(--mut);margin:12px 0 5px}
+#login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.lc{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px}
+.logo{width:64px;height:64px;border-radius:50%;border:3px solid var(--gold);display:grid;place-items:center;font-weight:900;font-style:italic;color:var(--gold);font-size:22px;margin:0 auto 14px;background:#1b1500}
+.lc h2{text-align:center}.lc p{color:var(--mut);font-size:13px;text-align:center;margin-top:4px}
+.err{color:var(--red);font-size:13px;margin-top:10px;min-height:18px;text-align:center}
+#shell{display:none;min-height:100vh}
+aside{position:fixed;left:0;top:0;bottom:0;width:220px;background:#0e0e0e;border-right:1px solid #1d1d1d;padding:18px 12px;display:flex;flex-direction:column;gap:4px}
+aside .brand{display:flex;gap:10px;align-items:center;padding:4px 8px 18px;font-weight:800}
+aside .brand .logo{width:38px;height:38px;font-size:13px;margin:0;border-width:2px}
+aside button{text-align:left;padding:11px 12px;border-radius:10px;color:#bbb;font-size:14px;font-weight:600;display:flex;justify-content:space-between}
+aside button.on{background:#1f1800;color:var(--gold)}
+aside .sp{flex:1}
+.bd{background:var(--gold);color:#000;font-size:11px;border-radius:9px;padding:1px 7px;font-weight:800}
+section{margin-left:220px;padding:26px 28px 60px;max-width:1100px}
+h1{font-size:22px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:22px}
+.st{background:var(--card);border:1px solid #262626;border-radius:14px;padding:16px}.st small{color:var(--mut);font-size:12px}.st b{display:block;font-size:26px;margin-top:6px;color:var(--gold)}
+.tb{background:var(--card);border:1px solid #262626;border-radius:14px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+th{text-align:left;color:var(--mut);font-weight:600;padding:12px 14px;border-bottom:1px solid #222;font-size:12px}
+td{padding:12px 14px;border-bottom:1px solid #1c1c1c;vertical-align:middle}
+tr:last-child td{border:0}
+.badge{font-size:10px;font-weight:800;padding:3px 8px;border-radius:10px;background:#2a2200;color:var(--gold)}.badge.l{background:#3a0d0d;color:#ff6b6b}.badge.f{background:#0d2e18;color:var(--green)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.panel{background:var(--card);border:1px solid #262626;border-radius:14px;padding:18px;margin-bottom:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.note{color:var(--mut);font-size:12px;line-height:1.5}
+.warn{background:#1f1800;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:12px;color:#e8d9a0;margin-bottom:18px;line-height:1.5}
+#ov{position:fixed;inset:0;background:#000b;display:none;place-items:center;z-index:20;padding:16px}
+#ov.show{display:grid}
+#md{background:#121212;border:1px solid var(--line);border-radius:18px;padding:22px;width:100%;max-width:520px;max-height:92vh;overflow:auto}
+#md h3{margin-bottom:4px}
+#toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;font-weight:700;padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:.3s;z-index:50}
+#toast.show{opacity:1}
+.mt{display:none}
+@media(max-width:760px){
+ aside{position:static;width:auto;flex-direction:row;overflow-x:auto;padding:10px;border-right:0;border-bottom:1px solid #1d1d1d}
+ aside .brand,aside .sp{display:none}aside button{white-space:nowrap}
+ section{margin:0;padding:18px 14px 50px}.two{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="login"><div class="lc">
+  <div class="logo">BX</div><h2 id="lt">Admin Login</h2><p id="ls">BattleX control panel</p>
+  <label>Username</label><input id="lu" autocomplete="username" value="admin">
+  <label>Password</label><input id="lp" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+  <div id="l2" style="display:none"><label>Confirm password</label><input id="lp2" type="password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+  <div class="err" id="le"></div>
+  <button class="btn" style="width:100%;padding:12px" onclick="doLogin()" id="lb">LOGIN</button>
+</div></div>
+
+<div id="shell">
+  <aside id="sb"></aside>
+  <section id="main"></section>
+</div>
+<div id="ov" onclick="if(event.target===this)closeM()"><div id="md"></div></div>
+<div id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const K_ADM='battlex_admin',K_APP='battlex_v1',K_RD='battlex_redeem';
+const rd=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+const wr=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('Storage error')}};
+let A=Object.assign({pw:null,user:'admin',custom:[],auto:true,minRedeem:50,promo:'ADD ₹200 GET 250 COIN',fail:0,lock:0},rd(K_ADM,{}));
+const saveA=()=>wr(K_ADM,A);
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),2000)}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- auth ---------- */
+async function sha(s){
+  try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('bx:'+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+  catch(e){let h=5381;for(const c of 'bx:'+s)h=(h*33^c.charCodeAt(0))>>>0;return 'x'+h}
+}
+function initLogin(){
+  const first=!A.pw;
+  $('#lt').textContent=first?'Create admin account':'Admin Login';
+  $('#ls').textContent=first?'First time setup – choose a password':'BattleX control panel';
+  $('#l2').style.display=first?'block':'none';
+  $('#lb').textContent=first?'CREATE & LOGIN':'LOGIN';
+}
+async function doLogin(){
+  const u=$('#lu').value.trim(),p=$('#lp').value,e=$('#le');
+  if(!A.pw){
+    if(!u)return e.textContent='Enter a username';
+    if(p.length<6)return e.textContent='Password must be at least 6 characters';
+    if(p!==$('#lp2').value)return e.textContent='Passwords do not match';
+    A.user=u;A.pw=await sha(p);saveA();sessionStorage.setItem('bx_adm','1');return enter();
+  }
+  if(Date.now()<A.lock)return e.textContent='Too many attempts. Wait '+Math.ceil((A.lock-Date.now())/1000)+'s';
+  if(u===A.user&&await sha(p)===A.pw){A.fail=0;saveA();sessionStorage.setItem('bx_adm','1');return enter()}
+  A.fail++;if(A.fail>=5){A.lock=Date.now()+30000;A.fail=0}saveA();e.textContent='Wrong username or password';
+}
+function enter(){$('#login').style.display='none';$('#shell').style.display='block';go('dash')}
+function logout(){sessionStorage.removeItem('bx_adm');location.reload()}
+
+/* ---------- data ---------- */
+const GAMES={fire:{name:'Fire Arena',modes:['Full Map','Headshot Only','Squad Clash','Lone Wolf']},royale:{name:'Mobile Royale',modes:['Classic Solo','Classic Duo','Team Deathmatch']}};
+const getApp=()=>rd(K_APP,null);
+const status=t=>{const n=Date.now();return n<t.start?'up':n<t.start+25*60000?'live':'res'};
+const fdt=ts=>new Date(ts).toLocaleString([],{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const toLocalInput=ts=>{const d=new Date(ts-new Date().getTimezoneOffset()*60000);return d.toISOString().slice(0,16)};
+
+/* ---------- navigation ---------- */
+let V='dash';
+function go(v){V=v;render()}
+function render(){
+  const pend=rd(K_RD,[]).filter(r=>r.status==='pending').length;
+  const nb=(k,l,b)=>`<button class="${V===k?'on':''}" onclick="go('${k}')"><span>${l}</span>${b?`<span class="bd">${b}</span>`:''}</button>`;
+  $('#sb').innerHTML=`<div class="brand"><div class="logo">BX</div>Admin</div>`+nb('dash','Dashboard')+nb('tour','Tournaments')+nb('redeem','Redeem requests',pend)+nb('players','Players')+nb('set','Settings')+`<div class="sp"></div><button onclick="logout()">Logout</button>`;
+  $('#main').innerHTML=VIEW[V]();
+}
+
+/* ---------- views ---------- */
+const VIEW={
+dash(){
+  const app=getApp()||{},rq=rd(K_RD,[]),c=A.custom;
+  const live=c.filter(t=>status(t)==='live').length,up=c.filter(t=>status(t)==='up').length;
+  return `<h1>Dashboard</h1>${WARN}
+  <div class="grid">
+   <div class="st"><small>Custom tournaments</small><b>${c.length}</b></div>
+   <div class="st"><small>Live now</small><b>${live}</b></div>
+   <div class="st"><small>Upcoming</small><b>${up}</b></div>
+   <div class="st"><small>Pending redeems</small><b>${rq.filter(r=>r.status==='pending').length}</b></div>
+   <div class="st"><small>Player coins (this browser)</small><b>${app.dep!=null?Math.floor(app.dep+app.win+app.bonus):'–'}</b></div>
+  </div>
+  <div class="panel"><b>Quick start</b><p class="note" style="margin-top:8px">1) Go to <b>Tournaments</b> → <b>New tournament</b> and set game, mode, fee, prize, time, Room ID & password.<br>2) Open the user app in the same browser – the match shows up in its lobby.<br>3) After the match, open it here → <b>Result</b> and enter winners.<br>4) Handle withdrawals in <b>Redeem requests</b>.</p></div>`;
+},
+tour(){
+  const rows=[...A.custom].sort((a,b)=>b.start-a.start).map(t=>{
+    const s=status(t),b=s==='live'?'<span class="badge l">● LIVE</span>':s==='up'?'<span class="badge">UPCOMING</span>':'<span class="badge f">FINISHED</span>';
+    return `<tr><td><b>${esc(t.title)}</b><div class="note">${GAMES[t.gk].name} · ${GAMES[t.gk].modes[t.mi]}</div></td><td>${fdt(t.start)}</td><td>${t.fee||'FREE'}</td><td>${t.prize}</td><td>${t.filled}/${t.slots}</td><td>${esc(t.room||'–')} / ${esc(t.pass||'–')}</td><td>${b}</td>
+    <td><div class="acts"><button class="btn s g" onclick="tForm('${t.id}')">Edit</button><button class="btn s ok" onclick="resForm('${t.id}')">Result</button><button class="btn s r" onclick="tDel('${t.id}')">Delete</button></div></td></tr>`}).join('');
+  return `<h1>Tournaments <button class="btn" onclick="tForm()">＋ New tournament</button></h1>
+  <div class="tb"><table><tr><th>Title</th><th>Start</th><th>Fee</th><th>Prize</th><th>Slots</th><th>Room / Pass</th><th>Status</th><th></th></tr>${rows||'<tr><td colspan="8" class="note" style="text-align:center;padding:30px">No custom tournaments yet</td></tr>'}</table></div>`;
+},
+redeem(){
+  const rq=rd(K_RD,[]).slice().reverse();
+  const rows=rq.map(r=>`<tr><td><b>${esc(r.name)}</b><div class="note">ID ${esc(r.uid)}</div></td><td>${r.amt}</td><td>${esc(r.upi)}</td><td>${fdt(r.ts)}</td><td><span class="badge ${r.status==='paid'?'f':r.status==='rejected'?'l':''}">${r.status.toUpperCase()}</span></td>
+   <td>${r.status==='pending'?`<div class="acts"><button class="btn s ok" onclick="rdAct('${r.rid}','paid')">Mark paid</button><button class="btn s r" onclick="rdAct('${r.rid}','rejected')">Reject & refund</button></div>`:''}</td></tr>`).join('');
+  return `<h1>Redeem requests</h1><div class="tb"><table><tr><th>Player</th><th>Coins</th><th>UPI ID</th><th>Requested</th><th>Status</th><th></th></tr>${rows||'<tr><td colspan="6" class="note" style="text-align:center;padding:30px">No requests</td></tr>'}</table></div>
+  <p class="note" style="margin-top:12px">“Mark paid” – you have sent the money to the UPI ID yourself. “Reject” returns the coins to the player's winnings.</p>`;
+},
+players(){
+  const a=getApp();
+  if(!a)return `<h1>Players</h1>${WARN}<div class="panel note">No player data found. Open the user app once in this browser.</div>`;
+  return `<h1>Players</h1>${WARN}<div class="tb"><table><tr><th>Name</th><th>ID</th><th>Deposited</th><th>Winning</th><th>Bonus</th><th>Matches</th><th>Wins</th><th></th></tr>
+  <tr><td><b>${esc(a.name)}</b></td><td>${esc(a.id)}</td><td>${a.dep}</td><td>${a.win}</td><td>${a.bonus}</td><td>${a.matches}</td><td>${a.wins}</td><td><button class="btn s" onclick="coinForm()">Adjust coins</button></td></tr></table></div>
+  <p class="note" style="margin-top:12px">Only the player of this browser is shown. A list of all players needs a real backend (e.g. Firebase).</p>`;
+},
+set(){return `<h1>Settings</h1>
+  <div class="panel"><b>App settings</b>
+   <label>Promo strip text on home screen</label><input id="s1" value="${esc(A.promo)}">
+   <label>Minimum redeem (coins)</label><input id="s2" type="number" min="1" value="${A.minRedeem}">
+   <label>Auto-generated demo matches in the app</label><select id="s3"><option value="1" ${A.auto?'selected':''}>Show</option><option value="0" ${!A.auto?'selected':''}>Hide (only my tournaments)</option></select>
+   <br><button class="btn" onclick="saveSet()">Save settings</button></div>
+  <div class="panel"><b>Change password</b>
+   <div class="two"><div><label>New password</label><input id="np" type="password"></div><div><label>Confirm</label><input id="np2" type="password"></div></div>
+   <br><button class="btn" onclick="chPw()">Update password</button></div>`}
+};
+const WARN=`<div class="warn">⚠ Demo mode: this panel stores data in your browser (localStorage), so the login is <b>not secure</b> – anyone with access to this browser can change data. For real users, move this to a backend (Firebase/Supabase) with proper rules.</div>`;
+
+/* ---------- modal ---------- */
+const openM=h=>{$('#md').innerHTML=h;$('#ov').classList.add('show')};
+const closeM=()=>$('#ov').classList.remove('show');
+
+function tForm(id){
+  const t=A.custom.find(x=>x.id===id)||{gk:'fire',mi:0,title:'',fee:10,prize:100,slots:50,filled:0,start:Date.now()+3600000,room:'',pass:''};
+  openM(`<h3>${id?'Edit':'New'} tournament</h3>
+  <div class="two"><div><label>Game</label><select id="f_g" onchange="modeOpts()">${Object.entries(GAMES).map(([k,g])=>`<option value="${k}" ${t.gk===k?'selected':''}>${g.name}</option>`).join('')}</select></div>
+  <div><label>Mode</label><select id="f_m"></select></div></div>
+  <label>Title</label><input id="f_t" value="${esc(t.title)}" placeholder="e.g. Sunday Mega Match">
+  <div class="two"><div><label>Entry fee (0 = free)</label><input id="f_f" type="number" min="0" value="${t.fee}"></div><div><label>Prize pool</label><input id="f_p" type="number" min="0" value="${t.prize}"></div>
+  <div><label>Total slots</label><input id="f_s" type="number" min="2" value="${t.slots}"></div><div><label>Already filled</label><input id="f_fl" type="number" min="0" value="${t.filled}"></div></div>
+  <label>Start time</label><input id="f_d" type="datetime-local" value="${toLocalInput(t.start)}">
+  <div class="two"><div><label>Room ID</label><input id="f_r" value="${esc(t.room||'')}"></div><div><label>Room password</label><input id="f_pw" value="${esc(t.pass||'')}"></div></div>
+  <p class="note" style="margin-top:6px">Players see Room ID/password after joining, 15 min before start.</p><br>
+  <div class="acts"><button class="btn" onclick="tSave('${id||''}')">Save</button><button class="btn g" onclick="closeM()">Cancel</button></div>`);
+  window._mi=t.mi;modeOpts();
+}
+function modeOpts(){const g=$('#f_g').value;$('#f_m').innerHTML=GAMES[g].modes.map((m,i)=>`<option value="${i}" ${i===window._mi?'selected':''}>${m}</option>`).join('');window._mi=0}
+function tSave(id){
+  const t={id:id||'adm-'+Date.now(),gk:$('#f_g').value,mi:+$('#f_m').value,title:$('#f_t').value.trim(),fee:Math.max(0,+$('#f_f').value||0),prize:Math.max(0,+$('#f_p').value||0),slots:Math.max(2,+$('#f_s').value||2),filled:Math.max(0,+$('#f_fl').value||0),start:new Date($('#f_d').value).getTime(),room:$('#f_r').value.trim(),pass:$('#f_pw').value.trim(),custom:1};
+  if(!t.title)return toast('Enter a title');if(isNaN(t.start))return toast('Pick a start time');if(t.filled>t.slots)return toast('Filled > slots');
+  const i=A.custom.findIndex(x=>x.id===id);if(i>=0){t.res=A.custom[i].res;A.custom[i]=t}else A.custom.push(t);
+  saveA();closeM();toast('Saved');render();
+}
+function tDel(id){if(!confirm('Delete this tournament?'))return;A.custom=A.custom.filter(x=>x.id!==id);saveA();render()}
+function resForm(id){
+  const t=A.custom.find(x=>x.id===id),r=t.res||['','',''];
+  openM(`<h3>Result – ${esc(t.title)}</h3><p class="note">Enter winner names (use the exact player name for coins to be paid in the app: 1st 60%, 2nd 25%, 3rd 15% of prize).</p>
+  <label>🥇 1st</label><input id="r0" value="${esc(r[0])}"><label>🥈 2nd</label><input id="r1" value="${esc(r[1])}"><label>🥉 3rd</label><input id="r2" value="${esc(r[2])}"><br>
+  <div class="acts"><button class="btn" onclick="resSave('${id}')">Publish result</button><button class="btn g" onclick="closeM()">Cancel</button></div>`);
+}
+function resSave(id){const t=A.custom.find(x=>x.id===id);t.res=[0,1,2].map(i=>$('#r'+i).value.trim()||'—');saveA();closeM();toast('Result saved');render()}
+function rdAct(rid,st){
+  const rq=rd(K_RD,[]),r=rq.find(x=>x.rid===rid);if(!r)return;r.status=st;
+  if(st==='rejected'){const a=getApp();if(a&&a.id===r.uid){a.win+=r.amt;a.hist=a.hist||[];a.hist.unshift({t:'Redeem rejected – refund',a:r.amt,ts:Date.now()});wr(K_APP,a)}}
+  wr(K_RD,rq);toast(st==='paid'?'Marked as paid':'Rejected & refunded');render();
+}
+function coinForm(){
+  openM(`<h3>Adjust coins</h3><p class="note">Use a negative number to deduct.</p>
+  <label>Wallet</label><select id="c_k"><option value="dep">Deposited</option><option value="win">Winning</option><option value="bonus">Bonus</option></select>
+  <label>Amount</label><input id="c_a" type="number" placeholder="e.g. 50 or -20"><br>
+  <div class="acts"><button class="btn" onclick="coinSave()">Apply</button><button class="btn g" onclick="closeM()">Cancel</button></div>`);
+}
+function coinSave(){
+  const a=getApp(),k=$('#c_k').value,n=+$('#c_a').value;if(!n)return toast('Enter amount');
+  a[k]=Math.max(0,a[k]+n);a.hist=a.hist||[];a.hist.unshift({t:'Admin adjustment',a:n,ts:Date.now()});wr(K_APP,a);closeM();toast('Coins updated');render();
+}
+function saveSet(){A.promo=$('#s1').value.trim()||A.promo;A.minRedeem=Math.max(1,+$('#s2').value||50);A.auto=$('#s3').value==='1';saveA();toast('Settings saved')}
+async function chPw(){const p=$('#np').value;if(p.length<6)return toast('Min 6 characters');if(p!==$('#np2').value)return toast('Passwords do not match');A.pw=await sha(p);saveA();toast('Password updated')}
+
+/* ---------- boot ---------- */
+if(sessionStorage.getItem('bx_adm')==='1'&&A.pw)enter();else initLogin();
+</script>
+</body>
+</html>
